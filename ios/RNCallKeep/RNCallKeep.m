@@ -55,7 +55,9 @@ RCT_EXPORT_MODULE()
 #endif
     if (self = [super init]) {
         _isStartCallActionEventListenerAdded = NO;
-        _delayedEvents = [NSMutableArray array];
+        if(_delayedEvents == nil) { // do not owerwrite already inited  array
+            _delayedEvents = [NSMutableArray array];
+        }
     }
     return self;
 }
