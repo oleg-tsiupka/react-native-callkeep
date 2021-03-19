@@ -23,6 +23,7 @@ declare module 'react-native-callkeep' {
       maximumCallGroups?: string,
       maximumCallsPerCallGroup?: string,
       ringtoneSound?: string,
+      includesCallsInRecents?: boolean
     },
     android: {
       alertTitle: string,
@@ -40,12 +41,23 @@ declare module 'react-native-callkeep' {
   export type DidDisplayIncomingCallPayload = string | undefined;
   export type DidPerformSetMutedCallActionPayload = boolean;
 
+  export const CONSTANTS: {
+    END_CALL_REASONS: {
+      FAILED: 1,
+      REMOTE_ENDED: 2,
+      UNANSWERED: 3,
+      ANSWERED_ELSEWHERE: 4,
+      DECLINED_ELSEWHERE: 5 | 2,
+      MISSED: 2 | 6
+    }
+  };
+
   export default class RNCallKeep {
     static addEventListener(type: Events, handler: (args: any) => void): void
 
     static removeEventListener(type: Events): void
 
-    static setup(options: IOptions): Promise<void>
+    static setup(options: IOptions): Promise<boolean>
 
     static hasDefaultPhoneAccount(): boolean
 
@@ -61,6 +73,7 @@ declare module 'react-native-callkeep' {
       localizedCallerName?: string,
       handleType?: HandleType,
       hasVideo?: boolean,
+      options?: object,
     ): void
 
     static startCall(
@@ -75,7 +88,12 @@ declare module 'react-native-callkeep' {
       uuid: string,
       displayName: string,
       handle: string,
+      options?: object,
     ): void
+
+    static checkPhoneAccountEnabled(): Promise<boolean>;
+
+    static isConnectionServiceAvailable(): Promise<boolean>;
 
     /**
      * @description reportConnectedOutgoingCallWithUUID method is available only on iOS.
@@ -97,7 +115,12 @@ declare module 'react-native-callkeep' {
 
     static setReachable(): void
 
+    /**
+     * @description isCallActive method is available only on iOS.
+     */
     static isCallActive(uuid: string): Promise<boolean>
+
+    static getCalls(): Promise<object>
 
     /**
      * @description supportConnectionService method is available only on Android.
@@ -131,6 +154,10 @@ declare module 'react-native-callkeep' {
      * @description setAvailable method is available only on Android.
      */
     static setAvailable(active: boolean): void
+
+    static setForegroundServiceSettings(settings: Object): void
+
+    static canMakeMultipleCalls(allow: boolean): void
 
     static setCurrentCallActive(callUUID: string): void
 
